@@ -161,7 +161,9 @@ local function DestroyMapLabels()
       local x = ChunkSize * chunk.x
       local y = ChunkSize * chunk.y
       for _, chartTag in ipairs(game.forces.player.find_chart_tags(surface.name, {{x,y}, {x + ChunkSize, y + ChunkSize}})) do
-        chartTag.destroy()
+        if not chartTag.last_user then
+          chartTag.destroy()
+        end
       end
     end
   end
