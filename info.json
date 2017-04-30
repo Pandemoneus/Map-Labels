@@ -1,12 +1,12 @@
 {
  "name": "MapLabels",
- "version": "0.15.0",
+ "version": "0.15.1",
  "title": "Map Labels",
  "author": "Pandemoneus, Donovan Hawkins",
  "contact": "Pandemoneus@gmx.de, hawkins@cephira.com",
  "homepage": "https://forums.factorio.com/viewtopic.php?f=92&t=22380",
  "Licence": "MIT",
- "description": "Adds labels to resources on the map",
+ "description": "Adds labels to rescources on the map",
  "factorio_version": "0.15",
  "dependencies": ["base >= 0.15"]
 }
