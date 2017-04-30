@@ -13,6 +13,6 @@ if modInfo is not None:
   tempDir = os.path.join ('.', 'tmp')
   modDir = os.path.join(tempDir, modFileName)
   
-  shutil.copytree('.', modDir, ignore=shutil.ignore_patterns('*.py', '.git'))
+  shutil.copytree('.', modDir, ignore=shutil.ignore_patterns('*.py', '.git', '*.zip'))
   shutil.make_archive(modFileName, 'zip', tempDir)
   shutil.rmtree(tempDir)

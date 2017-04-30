@@ -112,28 +112,38 @@ local function CreateMapLabelsForRegion(surface, region, resourceName, displayNa
       end
       local position = {originX + floor(centroidX / tileCount + 0.5), originY + floor(centroidY / tileCount + 0.5)}
       
-      local prototype = game.entity_prototypes[resourceName]
+      local chartTag = {position = position}
       
-      if prototype then
-        if prototype.type == "resource" then
-          if prototype.resource_category == "basic-fluid" then
-            signalType = "fluid"
-          elseif prototype.resource_category == "basic-solid" then
-            signalType = "item"
-          else
-            signalType = nil
+      local showResourceIcon = settings.global["map-labels-show-resource-icon"].value
+      local showResourceName = settings.global["map-labels-show-resource-name"].value
+      
+      if showResourceIcon then
+        local prototype = game.entity_prototypes[resourceName]
+        local signalType = nil
+          
+        if prototype then
+          if prototype.type == "resource" then
+            if prototype.resource_category == "basic-fluid" then
+              signalType = "fluid"
+            elseif prototype.resource_category == "basic-solid" then
+              signalType = "item"
+            end
           end
+        end
+        
+        if signalType ~= nil then
+          local signalID = {type = signalType, name = resourceName}
+          chartTag.icon = signalID
         end
       end
       
-      local signalID = {type = signalType, name = resourceName}
-      local chartTag = {position = position, text = displayName}
-      
-      if signalType ~= nil then
-        chartTag.icon = signalID
+      if showResourceName then
+        chartTag.text = displayName
       end
 
-      game.forces.player.add_chart_tag(surface.name, chartTag)
+      if showResourceIcon or showResourceName then
+        game.forces.player.add_chart_tag(surface.name, chartTag)
+      end
     end
   end
 end
@@ -180,17 +190,27 @@ end
 
 local function InitPlayer(player)
   local gui = player.gui
-  if not gui.top.MapLabelButton then
-    gui.top.add{type="button", name = "MapLabelButton", caption = "Map Labels"}
+  
+  if settings.get_player_settings(player)["map-labels-show-button"].value then
+    if not gui.top.MapLabelButton then
+      gui.top.add{type="button", name = "MapLabelButton", caption = "Map Labels"}
+    end
+  else
+    if gui.top.MapLabelButton then
+      gui.top.MapLabelButton.destroy()
+    end
   end
 end
-
 
 script.on_init( function(event)
   global.HaveMapLabels = false
   for _, player in ipairs(game.players) do
     InitPlayer(player)
   end
+end)
+
+script.on_event(defines.events.on_player_created, function(event)
+  InitPlayer(game.players[event.player_index])
 end)
 
 script.on_configuration_changed(function(event)
@@ -200,22 +220,28 @@ script.on_configuration_changed(function(event)
   end
 end)
 
-
-script.on_event(defines.events.on_player_created, function(event)
-  InitPlayer(game.players[event.player_index])
+script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
+  if event.setting == "map-labels-show-button" then
+    InitPlayer(game.players[event.player_index])
+  end
 end)
 
+local function toggleMapLables()
+  if global.HaveMapLabels then
+    DestroyMapLabels()
+    global.HaveMapLabels = false
+  else
+    CreateMapLabels()
+    global.HaveMapLabels = true
+  end
+end
+
+script.on_event("map-labels-hotkey-toggle", function(event)
+  toggleMapLables()
+end)
 
 script.on_event(defines.events.on_gui_click, function(event)
-  local player = game.players[event.player_index]
-  local gui = player.gui
   if event.element.name == "MapLabelButton" then
-    if global.HaveMapLabels then
-      DestroyMapLabels()
-      global.HaveMapLabels = false
-    else
-      CreateMapLabels()
-      global.HaveMapLabels = true
-    end
+    toggleMapLables()
   end
 end)
