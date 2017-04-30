@@ -113,17 +113,25 @@ local function CreateMapLabelsForRegion(surface, region, resourceName, displayNa
       local position = {originX + floor(centroidX / tileCount + 0.5), originY + floor(centroidY / tileCount + 0.5)}
       
       local prototype = game.entity_prototypes[resourceName]
-      local signalType = "item"
+      
       if prototype then
         if prototype.type == "resource" then
           if prototype.resource_category == "basic-fluid" then
             signalType = "fluid"
+          elseif prototype.resource_category == "basic-solid" then
+            signalType = "item"
+          else
+            signalType = nil
           end
         end
       end
       
       local signalID = {type = signalType, name = resourceName}
-      local chartTag = {icon = signalID, position = position, text = displayName}
+      local chartTag = {position = position, text = displayName}
+      
+      if signalType ~= nil then
+        chartTag.icon = signalID
+      end
 
       game.forces.player.add_chart_tag(surface.name, chartTag)
     end
