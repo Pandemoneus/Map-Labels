@@ -14,5 +14,9 @@ if modInfo is not None:
   modDir = os.path.join(tempDir, modFileName)
   
   shutil.copytree('.', modDir, ignore=shutil.ignore_patterns('*.py', '.git', '*.zip'))
+  
+  if os.path.isfile(modFileName + '.zip'):
+    os.remove(modFileName + '.zip')
+    
   shutil.make_archive(modFileName, 'zip', tempDir)
   shutil.rmtree(tempDir)

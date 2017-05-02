@@ -123,9 +123,9 @@ local function CreateMapLabelsForRegion(surface, region, resourceName, displayNa
           
         if prototype then
           if prototype.type == "resource" then
-            if prototype.resource_category == "basic-fluid" then
+            if prototype.resource_category == "basic-fluid" and game.fluid_prototypes[resourceName] ~= nil then
               signalType = "fluid"
-            elseif prototype.resource_category == "basic-solid" then
+            elseif prototype.resource_category == "basic-solid" and game.item_prototypes[resourceName] ~= nil then
               signalType = "item"
             end
           end
