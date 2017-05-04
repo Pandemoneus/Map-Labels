@@ -10,9 +10,9 @@ additionalIgnorePatterns = ['*.py', '.git', '.gitignore']
 
 # reads non-commented ignore patterns from the .gitignore file
 def readGitIgnorePatterns():
+  patterns = set()
+   
   if os.path.isfile('.gitignore'):
-    patterns = set()
-    
     with open('.gitignore') as gitIgnoreFile:
       for line in gitIgnoreFile:
         if not line.startswith('#'):
@@ -21,7 +21,7 @@ def readGitIgnorePatterns():
           else:
             patterns.add(line)
           
-    return patterns
+  return patterns
 
 # taken from http://stackoverflow.com/questions/5351766/use-fnmatch-filter-to-filter-files-by-more-than-one-possible-file-extension/25413436#25413436
 # modified for ignoreFunction use
